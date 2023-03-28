@@ -1,48 +1,39 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {AddonPanel} from "@storybook/components";
 import {PanelContent, PanelContentProps} from "./components/PanelContent";
-import {API, useChannel} from '@storybook/api';
 import {EVENTS} from "./constants";
+import {addons} from '@storybook/addons';
 import {STORY_CHANGED} from "@storybook/core-events";
 
 interface PanelProps {
   active: boolean;
-  api: API;
 }
 
 export const Panel: React.FC<PanelProps> = (props) => {
   const eventCount = useRef(0);
   const [navigationEvents, setNavigationEvents] = useState<PanelContentProps['navigationEvents']>([]);
+  const channel = addons.getChannel();
 
-  useChannel({
-    [EVENTS.ROUTE_MATCHES]: (event) => {
-      setNavigationEvents(prev => [...prev, {...event, key: eventCount.current++ }]);
-    },
-    [EVENTS.NAVIGATION]: (event) => {
-      setNavigationEvents(prev => [...prev, {...event, key: eventCount.current++ }]);
-    },
-    [EVENTS.STORY_LOADED]: (event) => {
-      setNavigationEvents(prev => [...prev, {...event, key: eventCount.current++ }]);
-    },
-    [EVENTS.ACTION_INVOKED]: (event) => {
-      setNavigationEvents(prev => [...prev, {...event, key: eventCount.current++ }]);
-    },
-    [EVENTS.ACTION_SETTLED]: (event) => {
-      setNavigationEvents(prev => [...prev, {...event, key: eventCount.current++ }]);
-    },
-    [EVENTS.LOADER_INVOKED]: (event) => {
-      setNavigationEvents(prev => [...prev, {...event, key: eventCount.current++ }]);
-    },
-    [EVENTS.LOADER_SETTLED]: (event) => {
-      setNavigationEvents(prev => [...prev, {...event, key: eventCount.current++ }]);
-    },
-    [STORY_CHANGED]: () => {
-      setNavigationEvents([]);
-    }
-  });
+  useEffect(() => {
+    const stackEvent = (event: any) => setNavigationEvents(prev => [...prev, {...event, key: eventCount.current++ }]);
+    const eventsToSubscribe = [
+      EVENTS.STORY_LOADED,
+      EVENTS.NAVIGATION,
+      EVENTS.ROUTE_MATCHES,
+      EVENTS.LOADER_INVOKED,
+      EVENTS.LOADER_SETTLED,
+      EVENTS.ACTION_INVOKED,
+      EVENTS.ACTION_SETTLED,
+      STORY_CHANGED,
+    ]
+    eventsToSubscribe.forEach(e => channel.addListener(e, stackEvent));
+
+    return () => addons.getChannel().removeAllListeners();
+  }, []);
+
 
   const clear = () => {
-    props.api.emit(EVENTS.CLEAR);
+    channel.emit(EVENTS.CLEAR);
     setNavigationEvents([]);
   }
 

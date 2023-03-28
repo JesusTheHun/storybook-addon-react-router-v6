@@ -55,13 +55,3 @@ export type NavigationEventData = {
   [EVENTS.STORY_LOADED]: EventDataStoryLoaded;
   [EVENTS.ROUTE_MATCHES]: EventDataRouteMatches;
 };
-
-export type DataEventData = {
-  [EVENTS.ACTION_INVOKED]: never;
-};
-
-export type WithRouterParameters = Partial<{
-  routePath: string;
-  routeParams: Record<string, string>;
-  searchParams: Record<string, string>;
-}>

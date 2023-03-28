@@ -2,8 +2,8 @@ import React, {useEffect, useState} from "react";
 import {addons, types} from "@storybook/addons";
 import { STORY_CHANGED } from "@storybook/core-events";
 
-import {ADDON_ID, EVENTS, PANEL_ID, PARAM_KEY} from "../constants";
-import {Panel} from "../Panel";
+import {ADDON_ID, EVENTS, PANEL_ID, PARAM_KEY} from "./constants";
+import {Panel} from "./Panel";
 
 addons.register(ADDON_ID, (api) => {
   addons.add(PANEL_ID, {

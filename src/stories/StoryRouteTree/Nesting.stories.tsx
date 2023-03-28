@@ -4,6 +4,7 @@ import {withRouter} from "../../withRouter";
 import {FCC} from "../../fixes";
 
 export default {
+  title: "Nesting",
   decorators: [withRouter],
 };
 

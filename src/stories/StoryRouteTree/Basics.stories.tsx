@@ -3,9 +3,8 @@ import {Outlet, useLocation, useMatches, useParams, useSearchParams} from "react
 import {withRouter} from "../../withRouter";
 import {FCC} from "src/fixes";
 
-const DummyComponent: FCC = ({ children }) => <>{children}</>;
-
 export default {
+  title: "Basics",
   decorators: [withRouter],
 };
 

@@ -3,6 +3,7 @@ import {Outlet, useLoaderData, useRouteError} from "react-router-dom";
 import {withRouter} from "../../../withRouter";
 
 export default {
+  title: "Loader",
   decorators: [withRouter],
 };
 

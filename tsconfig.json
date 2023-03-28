@@ -3,7 +3,6 @@
     "strict": true,
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
-    "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "incremental": false,
@@ -14,9 +13,7 @@
     "noImplicitAny": true,
     "rootDir": "./src",
     "skipLibCheck": true,
-    "target": "es2020"
+    "target": "ES2020"
   },
-  "include": [
-    "src/**/*"
-  ],
+  "include": ["src/**/*"]
 }

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {ProviderExoticComponent, ProviderProps, useMemo, useState} from "react";
 import {ActionFunction, LoaderFunctionArgs, Route, RouteMatch, RouteProps} from "react-router-dom";
 import {RouterLogger} from "./RouterLogger";
 import {FCC} from "../fixes";
@@ -58,21 +58,24 @@ export const StoryRouteTree: FCC<StoryRouterProps> = ({
   const channel = addons.getChannel();
   const [deepRouteMatches, setDeepRouteMatches] = useState<RouteMatch[]>([]);
 
-  // @ts-ignore
-  UNSAFE_RouteContext.Provider._context = new Proxy(UNSAFE_RouteContext.Provider._context ?? {}, {
-    set(target: Ctx, p: keyof Ctx, v: Ctx[keyof Ctx]) {
-      if (p === '_currentValue') {
-        setDeepRouteMatches(currentMatches => {
-          if (v !== undefined && v.matches.length > currentMatches.length) {
-            return v.matches;
-          }
-          return currentMatches;
-        });
-      }
+  const RouteContextProvider = UNSAFE_RouteContext.Provider as ProviderExoticComponent<ProviderProps<unknown>> & { _context: Ctx };
 
-      return Reflect.set(target, p, v);
-    },
-  });
+  RouteContextProvider._context = useMemo(() => {
+    return new Proxy(RouteContextProvider._context ?? {}, {
+      set(target: Ctx, p: keyof Ctx, v: Ctx[keyof Ctx]) {
+        if (p === '_currentValue') {
+          setDeepRouteMatches(currentMatches => {
+            if (v && v.matches.length > currentMatches.length) {
+              return v.matches;
+            }
+            return currentMatches;
+          });
+        }
+
+        return Reflect.set(target, p, v);
+      },
+    })
+  }, [RouteContextProvider, setDeepRouteMatches]);
 
   const outletConfig: OutletProps = isOutletProps(outlet) ? outlet : {
     element: outlet,
